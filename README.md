@@ -24,8 +24,8 @@ These instructions will get you a copy of the project up and running on your loc
 Tools/Softwares required to run this application:
  - `.NET Core 2.2`
 
-## Running PetStore Application
-- Open PetStore.sln solution file in Visual Studio.
+## Running Shape Generator Application
+- Open ShapeGenerator.sln solution file in Visual Studio.
 - Compile the Solution. 
 - Run the Solution or Press Ctrl + F5.
 - Application runs which should display the Home Page where user can enter command to generate shape.

@@ -1,0 +1,237 @@
+﻿@model ShapeGenerator.Models.RequestModel
+
+@{
+    ViewData["Title"] = "Shape Generator";
+}
+
+<div class="text-left">
+    <form asp-action="GenerateShape" id="formGenerateShape">
+        <label>What shape do you need?</label><br />
+        <textarea asp-for="UserRequest" rows="4" cols="70" placeholder="Enter Shape details to be generated e.g. Draw a circle with a radius of 100"></textarea><br />
+        <span asp-validation-for="UserRequest" id="spanUserRequestError" class="text-danger"></span>
+    </form><br />
+    <input type="button" id="btnClear" onclick="clearInput();" value="Clear" />
+    <input type="button" id="btnGenerate" onclick="submitShapeGeneration();" value="Generate Shape" />
+    <br />
+    @Html.ValidationSummary()
+</div>
+<br />
+<div id="divShape">
+    <canvas height="1000" width="1000" id="cvShape"></canvas>
+</div>
+
+<script type="text/javascript">
+
+    var buffer = 10;
+    const canvas = document.getElementById('cvShape');
+    const ctx = canvas.getContext('2d');
+
+    function clearInput() {
+        $("#UserRequest").val("");
+        $("#spanUserRequestError").text("");
+        clearCanvas();
+        $("#UserRequest").focus();
+    }
+
+    function submitShapeGeneration() {
+        var form = $("#formGenerateShape");
+
+        return $.ajax({
+            url: form.attr("action"),
+            method: form.attr("method"),
+            data: form.serialize()
+        })
+            .done(function (result) {
+                if (result.errorMessage != null && result.errorMessage !== "") {
+                    $("#spanUserRequestError").text(result.errorMessage);
+                    clearCanvas();
+                }
+                else {
+                    GenerateShape(result)
+                }
+        });
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function GenerateShape(shapeModel) {
+
+        $("#divShape").hide();
+        $("#spanUserRequestError").text("");
+        clearCanvas();
+        ctx.strokeStyle = "#000000";
+
+        if (shapeModel.shapeType === 'Square') {
+            var sideLength = shapeModel.sideLength[0];
+            drawSquare(ctx, sideLength);
+        }
+        else if (shapeModel.shapeType === 'Rectangle') {
+            var height = shapeModel.height;
+            var width = shapeModel.width;
+            drawRectangle(ctx, height, width);
+        }
+        else if (shapeModel.shapeType === 'Circle') {
+            var radius = shapeModel.radius;
+            drawCircle(ctx, radius);
+        }
+        else if (shapeModel.shapeType === 'Oval') {
+            var height = shapeModel.height;
+            var width = shapeModel.width;
+            drawOval(ctx, height, width);
+        }
+        else if (shapeModel.shapeType === 'Parallelogram') {
+            var sideLength1 = shapeModel.sideLength[0];
+            var sideLength2 = shapeModel.sideLength[1];
+            drawParallelogram(ctx, sideLength1, sideLength2);
+        }
+        else if (shapeModel.shapeType === 'Equilateral Triangle') {
+            var sideLength = shapeModel.sideLength[0];
+            drawEqTriangle(ctx, sideLength);
+        }
+        else if (shapeModel.shapeType === 'Isosceles Triangle') {
+            var height = shapeModel.height;
+            var width = shapeModel.width;
+            drawIsoscelesTriangle(ctx, height, width);
+        }
+        else if (shapeModel.shapeType === 'Scalene Triangle')
+        {
+            var a = shapeModel.sideLength[0];
+            var b = shapeModel.sideLength[1];
+            var c = shapeModel.sideLength[2];
+            drawScaleneTraiangle(ctx, a, b, c);
+        }
+        else if (shapeModel.shapeType === 'Pentagon') {
+            var sideLength = shapeModel.sideLength[0];
+            drawPolygon(ctx, 5, sideLength);
+        }
+        else if (shapeModel.shapeType === 'Hexagon') {
+            var sideLength = shapeModel.sideLength[0];
+            drawPolygon(ctx, 6, sideLength);
+        }
+        else if (shapeModel.shapeType === 'Heptagon') {
+            var sideLength = shapeModel.sideLength[0];
+            drawPolygon(ctx, 7, sideLength);
+        }
+        else if (shapeModel.shapeType === 'Octagon') {
+            var sideLength = shapeModel.sideLength[0];
+            drawPolygon(ctx, 8, sideLength);
+        }
+
+        $("#divShape").fadeIn(1500);
+    }
+
+    function drawCircle(ctx, radius) {
+        var centerY = radius + buffer;
+        var centerX = radius + buffer;
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+        ctx.stroke();
+    }
+
+    function drawOval(ctx, height, width) {
+        var x = width + buffer;
+        var y = height + buffer;
+
+        ctx.beginPath();
+        ctx.ellipse(x, y, width, height, Math.PI, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function drawParallelogram(ctx, x, y) {
+        var gapSize = 30
+        ctx.beginPath();
+        ctx.moveTo(gapSize, gapSize);
+        ctx.lineTo(gapSize + x, gapSize);
+        ctx.lineTo(x, gapSize + y);
+        ctx.lineTo(0, gapSize + y);
+        ctx.lineTo(gapSize, gapSize);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function drawSquare(ctx, sideLength) {
+        ctx.beginPath();
+        ctx.moveTo(buffer, buffer);
+        ctx.lineTo(buffer + sideLength, buffer);
+        ctx.lineTo(buffer + sideLength, buffer + sideLength);
+        ctx.lineTo(buffer, buffer + sideLength);
+        ctx.lineTo(buffer, buffer);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function drawRectangle(ctx, height, width) {
+        ctx.beginPath();
+        ctx.moveTo(buffer, buffer);
+        ctx.lineTo(buffer + width, buffer);
+        ctx.lineTo(buffer + width, buffer + height);
+        ctx.lineTo(buffer, buffer + height);
+        ctx.lineTo(buffer, buffer);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function drawIsoscelesTriangle(ctx, height, width) {
+        ctx.beginPath();
+        ctx.moveTo((width / 2) + buffer, buffer);
+        ctx.lineTo(buffer, height);
+        ctx.lineTo(width + buffer, height);
+        ctx.lineTo((width / 2) + buffer, buffer);
+        ctx.stroke();
+        ctx.closePath();
+    }
+    function drawEqTriangle(ctx, side) {
+        var h = side * (Math.sqrt(3) / 2);
+        ctx.beginPath();
+        ctx.moveTo((side / 2) + buffer, buffer);
+        ctx.lineTo(side + buffer, h + buffer);
+        ctx.lineTo(buffer, h + buffer);
+        ctx.lineTo((side / 2) + buffer, buffer);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function drawScaleneTraiangle(ctx, a, b, c) {
+        let angleC = Math.acos((c * c - a * a - b * b) / (2 * a * b));
+        var startpoint = 50;
+
+        var triangle = {
+            //the first vertex
+            x1: startpoint,
+            y1: startpoint,
+            // the second vertex 
+            x2: startpoint + a,
+            y2: startpoint,
+            // the 3-rd vertex       
+            x3: startpoint + b * Math.cos(angleC),
+            y3: startpoint + b * Math.sin(angleC),
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(triangle.x1, triangle.y1);
+        ctx.lineTo(triangle.x2, triangle.y2);
+        ctx.lineTo(triangle.x3, triangle.y3);
+        ctx.lineTo(triangle.x1, triangle.y1);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    function drawPolygon(ctx, sides, sideLength) {
+        var XCenter = buffer + sideLength;
+        var YCenter = buffer + sideLength;
+
+        ctx.beginPath();
+        ctx.moveTo(XCenter + sideLength * Math.cos(0), YCenter + sideLength * Math.sin(0));
+
+        for (var i = 1; i <= sides; i += 1) {
+            ctx.lineTo(XCenter + sideLength * Math.cos(i * 2 * Math.PI / sides), YCenter + sideLength * Math.sin(i * 2 * Math.PI / sides));
+        }
+
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    }
+</script>

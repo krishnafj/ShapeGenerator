@@ -27,6 +27,8 @@ namespace ShapeGenerator.Core
             sidelength
         }
 
+        public const double maxAmount = 1000;
+
         private List<string> requiredWordsList = new List<string> { "Draw", "a/an", ShapeAttributeEnum.shape.ToString(), "with", "a",
             ShapeAttributeEnum.measurement.ToString(), "of", ShapeAttributeEnum.amount.ToString()};
 
@@ -114,7 +116,7 @@ namespace ShapeGenerator.Core
                         //Validate Amount
                         int amount = 0;
                         var isNumber = int.TryParse(splitRequiredStatement[userStatementCount], out amount);
-                        if (!isNumber || amount <= 0)
+                        if (!isNumber || amount <= 0 || amount > maxAmount)
                             isvalid = false;
                     }
                     else if (!requiredWordsList[i].ToLower().Split("/").Contains(splitRequiredStatement[userStatementCount].ToLower()))
@@ -162,7 +164,7 @@ namespace ShapeGenerator.Core
                         //Validate Amount
                         int amount = 0;
                         var isNumber = int.TryParse(splitOptionalStatement[userStatementCount], out amount);
-                        if (!isNumber || amount <= 0)
+                        if (!isNumber || amount <= 0 || amount > maxAmount)
                             isvalid = false;
                     }
                     else if (!optionalWordsList[i].ToLower().Split("/").Contains(splitOptionalStatement[userStatementCount].ToLower()))

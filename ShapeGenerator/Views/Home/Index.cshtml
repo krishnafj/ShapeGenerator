@@ -8,6 +8,7 @@
     <form asp-action="GenerateShape" id="formGenerateShape">
         <label>What shape do you need?</label><br />
         <textarea asp-for="UserRequest" rows="4" cols="70" placeholder="Enter Shape details to be generated e.g. Draw a circle with a radius of 100"></textarea><br />
+        <label>(Max shape dimension amount: 1000)</label><br />
         <span asp-validation-for="UserRequest" id="spanUserRequestError" class="text-danger"></span>
     </form><br />
     <input type="button" id="btnClear" onclick="clearInput();" value="Clear" />
@@ -17,7 +18,7 @@
 </div>
 <br />
 <div id="divShape">
-    <canvas height="1000" width="1000" id="cvShape"></canvas>
+    <canvas height="1050" width="1050" id="cvShape"></canvas>
 </div>
 
 <script type="text/javascript">
